@@ -1,97 +1,97 @@
 <!DOCTYPE html>
-<html>
-<head><meta name="generator" content="Hexo 3.8.0">
-  <meta charset="utf-8">
-  
-  <title>利用PPPoE漏洞静默进入路由器后台 | C1ick&#39;s blog</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="0x00在上次组会上学长演示了ARP欺骗和DNS劫持。突然想到路由器里有一个设置是使用指定DNS服务器，如果我们进入路由器后台，修改DNS……. 通常我们只能拿到wifi的连接密码和ssid，但要进入路由器管理界面还需要管理员密码。如果路由器采取拨号联网，我们在知道拨号帐号密码后可以重置路由器来实现进入路由器后台。 这几天在freebuf上看到利用PPPoE漏洞进入路由器后台，现在对家里的路由器进">
-<meta name="keywords" content="无线安全,协议类">
-<meta property="og:type" content="article">
-<meta property="og:title" content="利用PPPoE漏洞静默进入路由器后台">
-<meta property="og:url" content="http://yoursite.com/2018/04/24/pppoe/index.html">
-<meta property="og:site_name" content="C1ick&#39;s blog">
-<meta property="og:description" content="0x00在上次组会上学长演示了ARP欺骗和DNS劫持。突然想到路由器里有一个设置是使用指定DNS服务器，如果我们进入路由器后台，修改DNS……. 通常我们只能拿到wifi的连接密码和ssid，但要进入路由器管理界面还需要管理员密码。如果路由器采取拨号联网，我们在知道拨号帐号密码后可以重置路由器来实现进入路由器后台。 这几天在freebuf上看到利用PPPoE漏洞进入路由器后台，现在对家里的路由器进">
-<meta property="og:locale" content="default">
-<meta property="og:image" content="http://image.3001.net/images/20180226/15196412033371.png">
-<meta property="og:image" content="http://image.3001.net/images/20180226/15196412167364.png">
-<meta property="og:image" content="http://wx2.sinaimg.cn/mw690/0060lm7Tly1fqwwhkzdp7j311y0lctcv.jpg">
-<meta property="og:updated_time" content="2018-05-15T14:19:00.000Z">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="利用PPPoE漏洞静默进入路由器后台">
-<meta name="twitter:description" content="0x00在上次组会上学长演示了ARP欺骗和DNS劫持。突然想到路由器里有一个设置是使用指定DNS服务器，如果我们进入路由器后台，修改DNS……. 通常我们只能拿到wifi的连接密码和ssid，但要进入路由器管理界面还需要管理员密码。如果路由器采取拨号联网，我们在知道拨号帐号密码后可以重置路由器来实现进入路由器后台。 这几天在freebuf上看到利用PPPoE漏洞进入路由器后台，现在对家里的路由器进">
-<meta name="twitter:image" content="http://image.3001.net/images/20180226/15196412033371.png">
-  
-  <link rel="stylesheet" href="//cdn.bootcss.com/highlight.js/9.2.0/styles/github.min.css">
-  <script src="//cdn.bootcss.com/highlight.js/9.2.0/highlight.min.js"></script>
-  <script>
-    document.addEventListener('DOMContentLoaded', (event) => {
-      document.querySelectorAll('pre code').forEach((block) => {
-        hljs.highlightBlock(block);
-      });
-    });
-  </script>
-  <link rel="stylesheet" href="/css/index.css">
-</head>
-</html>
-<body style="
+<html lang="">
+  <head><meta name="generator" content="Hexo 3.8.0"><meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
 
-  background-color: #eff0f6
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
 
-">
-  <div id="container">
-    <nav id="nav">
-  <header class="header">
-    <a href="/" class="title">Clover Tuan</a>
-  </header>
-  <div class="ctnWrap">
-    <div class="icons">
-      
-        
-          
-            <a href="https://dribbble.com/clovertuan" target="_blank" class="nav-icn iconfont icon-dribbble"></a>
-          
-        
-          
-            <a href="https://www.behance.net/clovertuan" target="_blank" class="nav-icn iconfont icon-behance"></a>
-          
-        
-          
-            <a href="http://clovertuan.lofter.com/" target="_blank" class="nav-icn iconfont icon-lofter"></a>
-          
-        
-          
-            <a href="https://www.instagram.com/clovertuan/" target="_blank" class="nav-icn iconfont icon-instagram"></a>
-          
-        
-          
-            <a href="https://github.com/cloverTuan" target="_blank" class="nav-icn iconfont icon-github"></a>
-          
-        
-      
-    </div>
-    <div class="menu">
-      
-        
-            <a href="/" class="nav-menu ">HOME</a>
-          
-        
-            <a href="/archives" class="nav-menu ">ARCHIVE</a>
-          
-        
-            <a href="/about" class="nav-menu ">ABOUT</a>
-          
-        
-      
-    </div>
+<meta name="theme-color" content="#f8f5ec">
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+<meta name="description" content="利用PPPoE漏洞静默进入路由器后台"><meta name="keywords" content="无线安全, 协议类, C1ick's blog"><link rel="alternate" href="/default" title="C1ick's blog"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=2.11.0">
+<link rel="canonical" href="http://yoursite.com/2018/04/24/pppoe/">
+
+<link rel="stylesheet" type="text/css" href="/lib/fancybox/jquery.fancybox.css">
+<link rel="stylesheet" type="text/css" href="/css/style.css?v=2.11.0">
+
+<script id="baidu_push">
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+<script>
+  window.config = {"leancloud":{"app_id":null,"app_key":null},"toc":true,"fancybox":true,"pjax":"","latex":false};
+</script>
+
+    <title>利用PPPoE漏洞静默进入路由器后台 - C1ick's blog</title>
+  </head>
+
+  <body><div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/." class="logo">C1ick's blog</a>
   </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list"><a href="/">
+        <li class="mobile-menu-item">Home
+          </li>
+      </a></ul>
 </nav>
-    <div id="main"><section class="article">
-  <h2 class="title">利用PPPoE漏洞静默进入路由器后台</h2>
-  <p class="sub">Apr 24, 2018</p>
-  <article class="content">
-    <h3 id="0x00"><a href="#0x00" class="headerlink" title="0x00"></a>0x00</h3><p><del>在上次组会上学长演示了ARP欺骗和DNS劫持。突然想到路由器里有一个设置是使用指定DNS服务器，如果我们进入路由器后台，修改DNS…….</del></p>
+<div class="container" id="mobile-panel">
+      <header id="header" class="header"><div class="logo-wrapper">
+  <a href="/." class="logo">C1ick's blog</a>
+</div>
+
+<nav class="site-navbar"><ul id="menu" class="menu"><li class="menu-item">
+          <a class="menu-item-link" href="/">
+            Home
+            </a>
+        </li>
+      </ul></nav>
+</header>
+
+      <main id="main" class="main">
+        <div class="content-wrapper">
+          <div id="content" class="content"><article class="post">
+    <header class="post-header">
+      <h1 class="post-title">利用PPPoE漏洞静默进入路由器后台
+        </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2018-04-24
+        </span><span class="post-category">
+            <a href="/categories/无线安全/">无线安全</a>
+            </span>
+        </div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+    <h2 class="post-toc-title">Contents</h2>
+    <div class="post-toc-content">
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#0x00"><span class="toc-text">0x00</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x01-攻击原理"><span class="toc-text">0x01 攻击原理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x02-应用场景"><span class="toc-text">0x02 应用场景</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x03-攻击条件"><span class="toc-text">0x03 攻击条件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x04-攻击过程"><span class="toc-text">0x04 攻击过程</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#kali配置本地pppoe服务器"><span class="toc-text">kali配置本地pppoe服务器</span></a></li></ol></li></ol>
+    </div>
+  </div><div class="post-content"><h3 id="0x00"><a href="#0x00" class="headerlink" title="0x00"></a>0x00</h3><p><del>在上次组会上学长演示了ARP欺骗和DNS劫持。突然想到路由器里有一个设置是使用指定DNS服务器，如果我们进入路由器后台，修改DNS…….</del></p>
 <p>通常我们只能拿到wifi的连接密码和ssid，但要进入路由器管理界面还需要管理员密码。如果路由器采取拨号联网，我们在知道拨号帐号密码后可以重置路由器来实现进入路由器后台。</p>
 <p><del>这几天在freebuf上看到利用PPPoE漏洞进入路由器后台，现在对家里的路由器进行一次探索</del></p>
 <h3 id="0x01-攻击原理"><a href="#0x01-攻击原理" class="headerlink" title="0x01 攻击原理"></a>0x01 攻击原理</h3><p>pppoe协议的工作流程包含两个阶段：</p>
@@ -130,41 +130,62 @@ N：地址池的IP地址递增几个，本例中添增10，也就是从192.168.0
 <p>按下路由器reset，配置好拨号连接，将无线ssid和密码修改成与原来的一致，这样就很难发现路由器已被重置，达到“静默”的目的。</p>
 <p>现在我们就拿到了路由器的管理权限，并且很难被发现。我们可以修改路由器的DNS服务器地址，实现对局域网内的DNS欺骗，甚至可以使用远程web管理对路由器远程控制。</p>
 
-  </article>
-  <footer class="f-cf">
-    
-    
-      <a href="/2018/04/19/scapy_scanner/" class="link f-fr">使用Python scapy实现端口扫描器⟶</a>
-    
-  </footer>
-</section></div>
-    <footer id="footer" class="f-cf">
-  d.guangying@foxmail.com
-  
-    
-      
-        · <a href="https://dribbble.com/clovertuan" target="_blank" class="nav-icn">Dribbble</a>
-      
-    
-      
-        · <a href="https://www.behance.net/clovertuan" target="_blank" class="nav-icn">Behance</a>
-      
-    
-      
-        · <a href="http://clovertuan.lofter.com/" target="_blank" class="nav-icn">Lofter</a>
-      
-    
-      
-        · <a href="https://www.instagram.com/clovertuan/" target="_blank" class="nav-icn">Instagram</a>
-      
-    
-      
-        · <a href="https://github.com/cloverTuan" target="_blank" class="nav-icn">GitHub</a>
-      
-    
-  
-  <span class="copyright">All rights reserved @Clover Tuan</span>
-</footer>
+      </div>
+      <div class="post-copyright">
+    <p class="copyright-item">
+      <span>Author: </span>
+      <a href="http://yoursite.com">TG</a>
+    </p>
+    <p class="copyright-item">
+      <span>Link: </span>
+      <a href="http://yoursite.com/2018/04/24/pppoe/">http://yoursite.com/2018/04/24/pppoe/</a>
+    </p>
+    <p class="copyright-item">
+      <span>License: </span><a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/" target="_blank">知识共享署名-非商业性使用 4.0 国际许可协议</a>
+    </p>
   </div>
+      <footer class="post-footer">
+        <div class="post-tags">
+            <a href="/tags/无线安全/">无线安全</a>
+            <a href="/tags/协议类/">协议类</a>
+            </div>
+        
+        <nav class="post-nav"><a class="next" href="/2018/04/19/scapy_scanner/">
+        <span class="next-text nav-default">使用Python scapy实现端口扫描器</span>
+        <span class="prev-text nav-mobile">Next</span>
+        <i class="iconfont icon-right"></i>
+      </a>
+    </nav></footer>
+    </article></div><div class="comments" id="comments"></div></div>
+      </main>
+
+      <footer id="footer" class="footer"><div class="social-links"><a href="mailto:your@email.com" class="iconfont icon-email" title="email"></a>
+        <a href="https://github.com/ahonn" class="iconfont icon-github" title="github"></a>
+        <a href="/atom.xml" class="iconfont icon-rss" title="rss"></a>
+    </div><div class="copyright">
+  <span class="power-by">
+    Powered by <a class="hexo-link" href="https://hexo.io/">Hexo</a>
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    Theme - 
+    <a class="theme-link" href="https://github.com/ahonn/hexo-theme-even">Even</a>
+  </span>
+
+  <span class="copyright-year">&copy;2015 - 2019<span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">TG</span>
+  </span>
+</div>
+</footer>
+
+      <div class="back-to-top" id="back-to-top">
+        <i class="iconfont icon-up"></i>
+      </div>
+    </div><script type="text/javascript" src="/lib/jquery/jquery.min.js"></script>
+  <script type="text/javascript" src="/lib/slideout/slideout.js"></script>
+  <script type="text/javascript" src="/lib/fancybox/jquery.fancybox.pack.js"></script>
+  <script type="text/javascript" src="/js/src/even.js?v=2.11.0"></script>
 </body>
 </html>
