@@ -13,7 +13,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
 
-<meta name="description" content="利用PPPoE漏洞静默进入路由器后台"><meta name="keywords" content="协议类, 无线安全, C1ick's blog"><link rel="alternate" href="/default" title="C1ick's blog"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=2.11.0">
+<meta name="description" content="利用PPPoE漏洞静默进入路由器后台"><meta name="keywords" content="无线安全, 协议类, C1ick's blog"><link rel="alternate" href="/default" title="C1ick's blog"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=2.11.0">
 <link rel="canonical" href="http://yoursite.com/2018/04/24/pppoe/">
 
 <link rel="stylesheet" type="text/css" href="/lib/fancybox/jquery.fancybox.css">
@@ -110,13 +110,7 @@
   </div><div class="post-content"><h3 id="0x00"><a href="#0x00" class="headerlink" title="0x00"></a>0x00</h3><p><del>在上次组会上学长演示了ARP欺骗和DNS劫持。突然想到路由器里有一个设置是使用指定DNS服务器，如果我们进入路由器后台，修改DNS…….</del></p>
 <p>通常我们只能拿到wifi的连接密码和ssid，但要进入路由器管理界面还需要管理员密码。如果路由器采取拨号联网，我们在知道拨号帐号密码后可以重置路由器来实现进入路由器后台。</p>
 <p><del>这几天在freebuf上看到利用PPPoE漏洞进入路由器后台，现在对家里的路由器进行一次探索</del></p>
-<h3 id="0x01-攻击原理"><a href="#0x01-攻击原理" class="headerlink" title="0x01 攻击原理"></a>0x01 攻击原理</h3><p>pppoe协议的工作流程包含两个阶段：</p>
-<ul>
-<li><p>发现阶段</p>
-</li>
-<li><p>会话阶段</p>
-</li>
-</ul>
+<h3 id="0x01-攻击原理"><a href="#0x01-攻击原理" class="headerlink" title="0x01 攻击原理"></a>0x01 攻击原理</h3><p>pppoe协议的工作流程包含发现阶段和会话阶段</p>
 <p><img src="http://image.3001.net/images/20180226/15196412033371.png" alt=""><br><img src="http://image.3001.net/images/20180226/15196412167364.png" alt=""></p>
 <p>在发现阶段，客户端将PADI广播寻找PPPoE服务器，通过自建PPPoE服务器接受PADI请求与客户端建立会话。在会话阶段，通过LCP协商要求使用PAP（明文传输的认证方式），之后用wireshark等抓包工具抓包即可得到PPPoE帐号及密码。</p>
 <h3 id="0x02-应用场景"><a href="#0x02-应用场景" class="headerlink" title="0x02 应用场景"></a>0x02 应用场景</h3><p>目前拨号连接广泛应用于运营商提供的网络接入，学校，小区,<em>宿舍</em>等。所以很多路由器的WAN接入方式为拨号连接，在宾馆，酒店，学校，民宿我们常常能够接触到许多无线路由器，当我们使用这些路由器的WiFi/LAN时，我们有可能已经被监听或钓鱼了。</p>
@@ -141,7 +135,7 @@ R：这是分配给客户端的地址池起始地址，本例中从192.168.0.100
 N：地址池的IP地址递增几个，本例中添增10，也就是从192.168.0.100开始分配，一共分配20个IP地址
 </code></pre><p>现在自建PPPoE服务器已经开始工作了</p>
 <p><em>关闭路由器电源，将路由器与本机用网线连接，打开wireshark监听eth0网卡过滤PPP协议数据包，接通路由器电源，直到抓到PPP认证数据包，如图</em></p>
-<p><img src="http://wx2.sinaimg.cn/mw690/0060lm7Tly1fqwwhkzdp7j311y0lctcv.jpg" alt=""><br>~~ 这是在家做的 ~~</p>
+<p><img src="http://wx2.sinaimg.cn/mw690/0060lm7Tly1fqwwhkzdp7j311y0lctcv.jpg" alt=""></p>
 <p><strong>进入路由器后台</strong></p>
 <p>按下路由器reset，配置好拨号连接，将无线ssid和密码修改成与原来的一致，这样就很难发现路由器已被重置，达到“静默”的目的。</p>
 <p>现在我们就拿到了路由器的管理权限，并且很难被发现。我们可以修改路由器的DNS服务器地址，实现对局域网内的DNS欺骗，甚至可以使用远程web管理对路由器远程控制。</p>
@@ -162,8 +156,8 @@ N：地址池的IP地址递增几个，本例中添增10，也就是从192.168.0
   </div>
       <footer class="post-footer">
         <div class="post-tags">
-            <a href="/tags/协议类/">协议类</a>
             <a href="/tags/无线安全/">无线安全</a>
+            <a href="/tags/协议类/">协议类</a>
             </div>
         
         <nav class="post-nav"><a class="next" href="/2018/04/19/scapy_scanner/">
